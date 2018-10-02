@@ -30,8 +30,9 @@ app.post('/api/phonelist/', (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     const node = {
-        id: list.lastIndexOf.id + 1,
-        name: req.body.name
+        id: list[list.length - 1].id + 1,
+        name: req.body.name,
+        number: req.body.number
     };
     list.push(node);
     res.send(node);
@@ -62,10 +63,10 @@ app.delete('/api/phonelist/:id', (req, res) => {
 function validateNode(node) {
     const schema = {
         name: Joi.string().min(2).required(),
-        number: Joi.parseInt.min(3).required()
+        number: Joi.number().integer().min(3).required()
     };
 
-    return Joi.validate(course, schema);
+    return Joi.validate(node, schema);
 };
 
 const port = process.env.PORT || 3000;

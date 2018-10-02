@@ -5,9 +5,9 @@ const app = express();
 app.use(express.json());
 
 const list = [
-    { id: 1, name: 'John', number: '123456789' },
-    { id: 2, name: 'John', number: '123456789' },
-    { id: 3, name: 'John', number: '123456789' },
+    { id: 1, name: 'John', number: 123456789 },
+    { id: 2, name: 'John', number: 123456789 },
+    { id: 3, name: 'John', number: 123456789 },
 ];
 
 app.get('/', (req, res) => {
@@ -46,7 +46,7 @@ app.put('/api/phonelist/:id', (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     node.name = req.body.name;
-    number.name = req.body.name;
+    node.number = req.body.number;
     res.send(node);
 });
 

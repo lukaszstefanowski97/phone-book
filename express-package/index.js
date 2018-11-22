@@ -5,7 +5,7 @@ const request = require('request');
 
 const headers = {
     Authorization: "Basic YXZpZC5wdWJsaXNoLnR3aXR0ZXItODkwNjdjNjJmYWFkNDJiODgxMGNmMzI4ZjdjNTU0ZDg6MjUzOTIzOTI5OGUyNzM" +
-    "0ZDU5YzIwNzI4YWFmMmQxOTI3MDNjOWZjNzUwODc4Mjc4YTg3N2E0NDQ5YTM4ZDQwMQ=="
+        "0ZDU5YzIwNzI4YWFmMmQxOTI3MDNjOWZjNzUwODc4Mjc4YTg3N2E0NDQ5YTM4ZDQwMQ=="
 };
 headers['Content-Type'] = "application/x-www-form-urlencoded";
 
@@ -15,34 +15,42 @@ const formData = {
     password: "Avid123"
 };
 
+let accessToken;
+
 request.post(
     {
         url: 'https://10.42.24.55/auth/sso/login/oauth2/ropc/ldap',
         form: formData,
         rejectUnauthorized: false,
         headers: {
-            Authorization: "Basic YXZpZC5wdWJsaXNoLnR3aXR0ZXItODkwNjdjNjJmYWFkNDJiODgxMGNmMzI4ZjdjNTU0ZDg6MjUzOTIzOTI5OGUyNzM" +
-                "0ZDU5YzIwNzI4YWFmMmQxOTI3MDNjOWZjNzUwODc4Mjc4YTg3N2E0NDQ5YTM4ZDQwMQ=="
+            Authorization: "Basic YXZpZC5wdWJsaXNoLnR3aXR0ZXItODkwNjdjNjJmYWFkNDJiODgxMGNmMzI4ZjdjNTU0ZDg6MjUzOTIzOTI" +
+                "5OGUyNzM0ZDU5YzIwNzI4YWFmMmQxOTI3MDNjOWZjNzUwODc4Mjc4YTg3N2E0NDQ5YTM4ZDQwMQ=="
         }
     },
     function (err, httpResponse, body) {
-        console.log(err, body);
+        if (err) console.error(err);
+        else console.log(body);
+        accessToken = JSON.parse(body).access_token;
+        getAssetInfo(accessToken)
     }
 );
 
-headers['Content-Type'] = "application/x-www-form-urlencoded";
-headers['Authorization'] = "Bearer YWY5MDg0MmUtMjJjMS00MTM3LTk3YjAtOTEzZGFjNmQ5MmUw";
+function getAssetInfo(accessToken) {
+    console.log(accessToken);
+    headers['Content-Type'] = "application/x-www-form-urlencoded";
+    headers['Authorization'] = "Bearer YWY5MDg0MmUtMjJjMS00MTM3LTk3YjAtOTEzZGFjNmQ5MmUw";
 
-request.get(
-    {
-        url: 'https://10.42.24.55/apis/avid.pam;version=2;realm=B1C9D208-7A67-47BB-B392-6E307AC6F796',
-        form: formData,
-        rejectUnauthorized: false,
-        headers: {
-            headers
+    request.get(
+        {
+            url: 'https://10.42.24.55/apis/avid.pam;version=2;realm=B1C9D208-7A67-47BB-B392-6E307AC6F796',
+            rejectUnauthorized: false,
+            headers: {
+                Authorization: accessToken
+            }
+        },
+        function (err, httpResponse, body) {
+            if (err) console.error(err);
+            else console.log(body)
         }
-    },
-    function (err) {
-        console.log(err);
-    }
-);
+    );
+}

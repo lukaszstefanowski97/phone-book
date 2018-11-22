@@ -1,73 +1,48 @@
 const Joi = require('joi');
 const express = require('express');
 const app = express();
+const request = require('request');
 
-app.use(express.json());
+const headers = {
+    Authorization: "Basic YXZpZC5wdWJsaXNoLnR3aXR0ZXItODkwNjdjNjJmYWFkNDJiODgxMGNmMzI4ZjdjNTU0ZDg6MjUzOTIzOTI5OGUyNzM" +
+    "0ZDU5YzIwNzI4YWFmMmQxOTI3MDNjOWZjNzUwODc4Mjc4YTg3N2E0NDQ5YTM4ZDQwMQ=="
+};
+headers['Content-Type'] = "application/x-www-form-urlencoded";
 
-const list = [
-    { id: 1, name: 'John', number: 123456789 },
-    { id: 2, name: 'John', number: 123456789 },
-    { id: 3, name: 'John', number: 123456789 },
-];
-
-app.get('/', (req, res) => {
-    res.send('Hello');
-});
-
-app.get('/api/phonelist/', (req, res) => {
-    if (!list) res.status(404).send('Not found');
-    res.send(list);
-});
-
-app.get('/api/phonelist/:id', (req, res) => {
-    const node = list.find(c => c.id === parseInt(req.params.id));
-    if (!node) res.status(404).send('Not found');
-    res.send(node);
-});
-
-app.post('/api/phonelist/', (req, res) => {
-    const { error } = validateNode(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
-    const node = {
-        id: list[list.length - 1].id + 1,
-        name: req.body.name,
-        number: req.body.number
-    };
-    list.push(node);
-    res.send(node);
-});
-
-app.put('/api/phonelist/:id', (req, res) => {
-    const node = list.find(c => c.id === parseInt(req.params.id));
-    if (!node) return res.status(404).send('Not found');
-
-    const { error } = validateNode(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
-    node.name = req.body.name;
-    node.number = req.body.number;
-    res.send(node);
-});
-
-app.delete('/api/phonelist/:id', (req, res) => {
-    const node = list.find(c => c.id === parseInt(req.params.id));
-    if (!node) return res.status(404).send('Not found');
-
-    const index = list.indexOf(node);
-    list.splice(index, 1);
-
-    res.send(node);
-});
-
-function validateNode(node) {
-    const schema = {
-        name: Joi.string().min(2).required(),
-        number: Joi.number().integer().min(3).required()
-    };
-
-    return Joi.validate(node, schema);
+const formData = {
+    grant_type: "password",
+    username: "Administrator",
+    password: "Avid123"
 };
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+request.post(
+    {
+        url: 'https://10.42.24.55/auth/sso/login/oauth2/ropc/ldap',
+        form: formData,
+        rejectUnauthorized: false,
+        headers: {
+            Authorization: "Basic YXZpZC5wdWJsaXNoLnR3aXR0ZXItODkwNjdjNjJmYWFkNDJiODgxMGNmMzI4ZjdjNTU0ZDg6MjUzOTIzOTI5OGUyNzM" +
+                "0ZDU5YzIwNzI4YWFmMmQxOTI3MDNjOWZjNzUwODc4Mjc4YTg3N2E0NDQ5YTM4ZDQwMQ=="
+        }
+    },
+    function (err, httpResponse, body) {
+        console.log(err, body);
+    }
+);
+
+headers['Content-Type'] = "application/x-www-form-urlencoded";
+headers['Authorization'] = "Bearer YWY5MDg0MmUtMjJjMS00MTM3LTk3YjAtOTEzZGFjNmQ5MmUw";
+
+request.get(
+    {
+        url: 'https://10.42.24.55/apis/avid.pam;version=2;realm=B1C9D208-7A67-47BB-B392-6E307AC6F796',
+        form: formData,
+        rejectUnauthorized: false,
+        headers: {
+            headers
+        }
+    },
+    function (err) {
+        console.log(err);
+    }
+);
